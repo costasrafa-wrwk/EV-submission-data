@@ -1,0 +1,3 @@
+"0","wind_turbines_exports_SH6 <- read_xlsx(""./data/EXP_SH6_850231_2000_2024.xlsx"", sheet = 1) %>% "
+"0","  pivot_longer(3:27, values_to = ""Free_On_Board_USD_Export"") %>% "
+"0","  separate(name, sep = ""-"", into = ""Year"")"

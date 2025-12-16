@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Rafael da Costa" />
+
+<meta name="date" content="2025-12-15" />
+
+<title>GitHub Repo</title>
+
+<script src="index_files/header-attrs-2.29/header-attrs.js"></script>
+<script src="index_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="index_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="index_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="index_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="index_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="index_files/navigation-1.1/tabsets.js"></script>
+<link href="index_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="index_files/highlightjs-9.12.0/highlight.js"></script>
+<link href="index_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="index_files/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" rel="stylesheet" />
+<link href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" rel="stylesheet" />
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<link href="index_files/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+<script src="index_files/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="index_files/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="index_files/leaflet-1.3.1/leaflet.js"></script>
+<link href="index_files/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="index_files/proj4-2.6.2/proj4.min.js"></script>
+<script src="index_files/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="index_files/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="index_files/leaflet-binding-2.2.3/leaflet.js"></script>
+<script src="index_files/leaflet-providers-2.0.0/leaflet-providers_2.0.0.js"></script>
+<script src="index_files/leaflet-providers-plugin-2.2.3/leaflet-providers-plugin.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">GitHub Repo</h1>
+<h4 class="author">Rafael da Costa</h4>
+<h4 class="date">2025-12-15</h4>
+
+</div>
+
+
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Year"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["n_Patents_Published"],"name":[2],"type":["int"],"align":["right"]},{"label":["n_Patents_Published_BROffice"],"name":[3],"type":["int"],"align":["right"]},{"label":["share_Patents_Publised_Out_BR"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"2000","2":"1","3":"1","4":"0.0"},{"1":"2001","2":"6","3":"6","4":"0.0"},{"1":"2002","2":"3","3":"3","4":"0.0"},{"1":"2003","2":"19","3":"19","4":"0.0"},{"1":"2004","2":"10","3":"10","4":"0.0"},{"1":"2005","2":"8","3":"7","4":"12.5"},{"1":"2006","2":"7","3":"7","4":"0.0"},{"1":"2007","2":"14","3":"10","4":"28.6"},{"1":"2008","2":"17","3":"12","4":"29.4"},{"1":"2009","2":"28","3":"18","4":"35.7"},{"1":"2010","2":"17","3":"15","4":"11.8"},{"1":"2011","2":"33","3":"24","4":"27.3"},{"1":"2012","2":"13","3":"7","4":"46.2"},{"1":"2013","2":"33","3":"22","4":"33.3"},{"1":"2014","2":"26","3":"16","4":"38.5"},{"1":"2015","2":"30","3":"24","4":"20.0"},{"1":"2016","2":"18","3":"10","4":"44.4"},{"1":"2017","2":"21","3":"21","4":"0.0"},{"1":"2018","2":"29","3":"22","4":"24.1"},{"1":"2019","2":"21","3":"15","4":"28.6"},{"1":"2020","2":"23","3":"23","4":"0.0"},{"1":"2021","2":"15","3":"12","4":"20.0"},{"1":"2022","2":"15","3":"11","4":"26.7"},{"1":"2023","2":"8","3":"7","4":"12.5"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Year"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["n_Patents_Published_byBR"],"name":[2],"type":["int"],"align":["right"]},{"label":["n_Patents_Published_Worldwide"],"name":[3],"type":["int"],"align":["right"]},{"label":["Brazilian_share"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"2000","2":"1","3":"607","4":"0.16474465"},{"1":"2001","2":"6","3":"876","4":"0.68493151"},{"1":"2002","2":"3","3":"1157","4":"0.25929127"},{"1":"2003","2":"19","3":"1597","4":"1.18973075"},{"1":"2004","2":"10","3":"1817","4":"0.55035773"},{"1":"2005","2":"8","3":"2121","4":"0.37718058"},{"1":"2006","2":"7","3":"2001","4":"0.34982509"},{"1":"2007","2":"14","3":"2666","4":"0.52513128"},{"1":"2008","2":"17","3":"3151","4":"0.53951127"},{"1":"2009","2":"28","3":"4517","4":"0.61988045"},{"1":"2010","2":"17","3":"5880","4":"0.28911565"},{"1":"2011","2":"33","3":"7085","4":"0.46577276"},{"1":"2012","2":"13","3":"7995","4":"0.16260163"},{"1":"2013","2":"33","3":"7687","4":"0.42929621"},{"1":"2014","2":"26","3":"6726","4":"0.38655962"},{"1":"2015","2":"30","3":"6735","4":"0.44543430"},{"1":"2016","2":"18","3":"5920","4":"0.30405405"},{"1":"2017","2":"21","3":"6218","4":"0.33772917"},{"1":"2018","2":"29","3":"7157","4":"0.40519771"},{"1":"2019","2":"21","3":"7595","4":"0.27649770"},{"1":"2020","2":"23","3":"7819","4":"0.29415526"},{"1":"2021","2":"15","3":"8858","4":"0.16933845"},{"1":"2022","2":"15","3":"8921","4":"0.16814259"},{"1":"2023","2":"8","3":"8479","4":"0.09435075"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p><img src="index_files/figure-html/figure1-1.png" width="672" /></p>
+<p><img src="index_files/figure-html/figure2-1.png" width="672" /></p>
+<pre><code>## Deleting source `docs/data/turbinas.geojson&#39; using driver `GeoJSON&#39;
+## Writing layer `turbinas&#39; to data source `docs/data/turbinas.geojson&#39; using driver `GeoJSON&#39;
+## Writing 59120 features with 4 fields and geometry type Point.</code></pre>
+<div class="leaflet html-widget html-fill-item" id="htmlwidget-30c768d0809b8145a4b5" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-30c768d0809b8145a4b5">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["OpenStreetMap",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]}],"setView":[[-14.2,-52.9],4,[]]},"evals":[],"jsHooks":{"render":[{"code":"function(el, x, data) {\n  return (\n  function(el, x) {\n    var map = this;\n\n    var clusters = L.markerClusterGroup({\n      chunkedLoading: true,\n      chunkInterval: 200,\n      chunkDelay: 50\n    });\n\n    fetch('docs/data/turbinas.geojson')\n      .then(r => r.json())\n      .then(gj => {\n        var layer = L.geoJSON(gj, {\n          pointToLayer: function(feature, latlng) {\n            return L.circleMarker(latlng, { radius: 3, weight: 0.5, fillOpacity: 0.7 });\n          }\n        });\n        clusters.addLayer(layer);\n        map.addLayer(clusters);\n      })\n      .catch(err => console.error('GeoJSON load failed:', err));\n  }\n  ).call(this.getMap(), el, x, data);\n}","data":null}]}}</script>
+<p><img src="index_files/figure-html/figure4-1.png" width="672" /></p>
+<p><img src="index_files/figure-html/figure6-1.png" width="672" /></p>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

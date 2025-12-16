@@ -1,0 +1,724 @@
+---
+title: "GitHub Repo"
+author: "Rafael da Costa"
+date: "2025-12-15"
+output: 
+  html_document:
+    df_print: paged
+    self_contained: false
+---
+
+
+```{r setup_1, echo=FALSE}
+#adicionando essa linha de código para não precisar repetir os parâmetros em todos os chunks
+knitr::opts_chunk$set(error=FALSE, warning=FALSE, message=FALSE, echo = FALSE)
+```
+
+```{r setup_2}
+#
+library(tidyverse) 
+library(lubridate) 
+library(readxl) 
+library(ggthemes) 
+library(scales)
+library(viridis) 
+library(RColorBrewer)
+library(sf)
+library(httr)
+library(jsonlite)
+library(quantmod)
+library(leaflet)
+
+#
+theme_set(theme_bw())
+```
+
+
+```{r data_loading1}
+WIPO_PatentsPublication_ByFillingCountry_BR <- read.delim("./data/patent_4b-FilingsBrazilOffice.csv", sep = ",",
+           skip = 6, row.names = NULL) %>% 
+  rename(Office=row.names,
+         Office_Code=Office,
+         Origin=Office..Code.,
+         Technology=Origin) %>% 
+  rename(X1980=Field.of.technology,
+         X1981=X1980,
+         X1982=X1981,
+         X1983=X1982,
+         X1984=X1983,
+         X1985=X1984,
+         X1986=X1985,
+         X1987=X1986,
+         X1988=X1987,
+         X1989=X1988,
+         X1990=X1989,
+         X1991=X1990,
+         X1992=X1991,
+         X1993=X1992,
+         X1994=X1993,
+         X1995=X1994,
+         X1996=X1995,
+         X1997=X1996,
+         X1998=X1997,
+         X1999=X1998,
+         X2000=X1999,
+         X2001=X2000,
+         X2002=X2001,
+         X2003=X2002,
+         X2004=X2003,
+         X2005=X2004,
+         X2006=X2005,
+         X2007=X2006,
+         X2008=X2007,
+         X2009=X2008,
+         X2010=X2009,
+         X2011=X2010,
+         X2012=X2011,
+         X2013=X2012,
+         X2014=X2013,
+         X2015=X2014,
+         X2016=X2015,
+         X2017=X2016,
+         X2018=X2017,
+         X2019=X2018,
+         X2020=X2019,
+         X2021=X2020,
+         X2022=X2021,
+         X2023=X2022,
+         X2024=X2023,
+         X2025=X2024) %>% 
+  select(-c(X2024, X2025))%>% 
+  mutate(across(X1980:X2023, ~replace_na(.,0))) %>% 
+  pivot_longer(X1980:X2023, names_to = "Year", values_to = "n_Patents_Published") %>% 
+  mutate(Year=as.numeric(str_remove_all(Year, "X")))
+```
+
+```{r data_loading2}
+WIPO_PatentsPublication_BRFilings_Worldwide <- read.delim("./data/patent_4b-BrazilianFilings_Worldwide.csv",sep = ",",
+           skip = 6, row.names = NULL)%>% 
+ rename(Patent_Filed_At=row.names,
+        Technology=Origin,
+        Patent_Filed_At_Code=Office,
+        Patent_Origin=Office..Code.) %>% 
+  rename(X1980=Field.of.technology,
+         X1981=X1980,
+         X1982=X1981,
+         X1983=X1982,
+         X1984=X1983,
+         X1985=X1984,
+         X1986=X1985,
+         X1987=X1986,
+         X1988=X1987,
+         X1989=X1988,
+         X1990=X1989,
+         X1991=X1990,
+         X1992=X1991,
+         X1993=X1992,
+         X1994=X1993,
+         X1995=X1994,
+         X1996=X1995,
+         X1997=X1996,
+         X1998=X1997,
+         X1999=X1998,
+         X2000=X1999,
+         X2001=X2000,
+         X2002=X2001,
+         X2003=X2002,
+         X2004=X2003,
+         X2005=X2004,
+         X2006=X2005,
+         X2007=X2006,
+         X2008=X2007,
+         X2009=X2008,
+         X2010=X2009,
+         X2011=X2010,
+         X2012=X2011,
+         X2013=X2012,
+         X2014=X2013,
+         X2015=X2014,
+         X2016=X2015,
+         X2017=X2016,
+         X2018=X2017,
+         X2019=X2018,
+         X2020=X2019,
+         X2021=X2020,
+         X2022=X2021,
+         X2023=X2022,
+         X2024=X2023,
+         X2025=X2024) %>% 
+  select(-c(X2024, X2025))%>% 
+  mutate(across(X1980:X2023, ~replace_na(.,0))) %>% 
+  pivot_longer(X1980:X2023, names_to = "Year", values_to = "n_Patents_Published") %>% 
+  mutate(Year=as.numeric(str_remove_all(Year, "X")))
+  
+```
+
+```{r data_loading3}
+
+WIPO_WindPatents_Total <- read.delim("./data/patent_4b-Total_Wind_Patents.csv",sep = ",",
+           skip = 6, row.names = NULL)%>% 
+ rename(Patent_Origin=row.names,
+        Patent_Origin_Code=Origin,
+        Technology=Office) %>% 
+  select(-Origin..Code.) %>% 
+  rename(X1980=Field.of.technology,
+         X1981=X1980,
+         X1982=X1981,
+         X1983=X1982,
+         X1984=X1983,
+         X1985=X1984,
+         X1986=X1985,
+         X1987=X1986,
+         X1988=X1987,
+         X1989=X1988,
+         X1990=X1989,
+         X1991=X1990,
+         X1992=X1991,
+         X1993=X1992,
+         X1994=X1993,
+         X1995=X1994,
+         X1996=X1995,
+         X1997=X1996,
+         X1998=X1997,
+         X1999=X1998,
+         X2000=X1999,
+         X2001=X2000,
+         X2002=X2001,
+         X2003=X2002,
+         X2004=X2003,
+         X2005=X2004,
+         X2006=X2005,
+         X2007=X2006,
+         X2008=X2007,
+         X2009=X2008,
+         X2010=X2009,
+         X2011=X2010,
+         X2012=X2011,
+         X2013=X2012,
+         X2014=X2013,
+         X2015=X2014,
+         X2016=X2015,
+         X2017=X2016,
+         X2018=X2017,
+         X2019=X2018,
+         X2020=X2019,
+         X2021=X2020,
+         X2022=X2021,
+         X2023=X2022,
+         X2024=X2023,
+         X2025=X2024)%>% 
+  select(-c(X2024, X2025))%>% 
+  mutate(across(X1980:X2023, ~replace_na(.,0))) %>% 
+  pivot_longer(X1980:X2023, names_to = "Year", values_to = "n_Patents_Published") %>% 
+  mutate(Year=as.numeric(str_remove_all(Year, "X")),
+         Patent_Origin=str_replace_all(Patent_Origin, "China, Macao SAR", "China"),
+         Patent_Origin=str_replace_all(Patent_Origin, "China, Hong Kong SAR", "China")) %>% 
+  group_by(Patent_Origin, Year) %>% 
+  summarise(n_Patents_Published=sum(n_Patents_Published))
+
+```
+
+```{r data_loading4}
+#F03D is the International Patent Classification for Wind Turbines: https://ipcpub.wipo.int/
+BADEPI_filter_wind_patents <- read.delim("./data/badepiv10_ptn_ipc_campo_tec.csv", sep = ",", encoding = "latin1") %>% 
+  filter(str_detect(CD_CLASSIF, "F03D")) %>% 
+  pull(NO_PEDIDO)
+```
+
+
+```{r data_loading5}
+BADEPI_PatentsPublicationByCountry <- read.delim("./data/badepiv10_ptn_depositante.csv", sep = ",", encoding = "latin1") %>% 
+  filter(NO_PEDIDO%in%BADEPI_filter_wind_patents) %>% 
+  mutate(DT_INICIO=as.Date(DT_INICIO, tryFormats = c("%d/%m/%Y")),
+         Year=year(DT_INICIO)) %>% 
+  group_by(Year) %>% 
+  count(CD_PAIS_PFPJ) %>% 
+  rename(Patents_Publication=n) %>% 
+  mutate(Patents_Total_inYear=sum(Patents_Publication)) %>% 
+  ungroup() %>% 
+  mutate(share=round(Patents_Publication/Patents_Total_inYear*100,2)) %>% 
+  filter(Year!=2024)
+```
+
+```{r data_loading6}
+# Generic fetcher using OBJECTID chunks (works for MapServer/FeatureServer)
+#fetch_arcgis_by_objectids <- function(query_url, chunk_size = 1000, out_crs = 4326) {
+  # 1) Get all OBJECTIDs
+  #ids_res <- GET(query_url, query = list(where = "1=1", returnIdsOnly = "true", f = "json"))
+  #stop_for_status(ids_res)
+  #ids_json <- fromJSON(content(ids_res, "text", encoding = "UTF-8"))
+  #object_ids <- ids_json$objectIds
+  #if (is.null(object_ids) || length(object_ids) == 0) {
+    #stop("No OBJECTIDs returned by the server.")
+ # }
+  #message("Total OBJECTIDs: ", length(object_ids))
+
+  # Helper to split into chunks
+  #chunks <- split(object_ids, ceiling(seq_along(object_ids) / chunk_size))
+
+  # 2) Loop over chunks, POST objectIds, and read GeoJSON
+  #batches <- vector("list", length(chunks))
+  #for (i in seq_along(chunks)) {
+    #ids_chunk <- paste0(chunks[[i]], collapse = ",")
+    #message(sprintf("Fetching chunk %d/%d (%d ids)...", i, length(chunks), length(chunks[[i]])))
+
+   # res <- POST(
+    #  url = query_url,
+    #  body = list(
+    #    f = "geojson",
+     #   objectIds = ids_chunk,
+     #   outFields = "*",
+     #   outSR = out_crs
+     # ),
+     # encode = "form"
+    #)
+    #stop_for_status(res)
+
+    #gj <- content(res, "text", encoding = "UTF-8")
+    #sf_batch <- tryCatch(st_read(gj, quiet = TRUE), error = function(e) NULL)
+
+    #if (is.null(sf_batch) || nrow(sf_batch) == 0) {
+    #  warning("Empty batch returned at chunk ", i, "; continuing.")
+    #  next
+    #}
+
+    #batches[[i]] <- sf_batch
+ # }
+
+  # 3) Combine all batches
+  #out <- bind_rows(Filter(Negate(is.null), batches))
+  #message("Combined rows: ", nrow(out))
+  #out
+#}
+
+# ── Usage for one layer ──────────────────────────────────────────────────
+#query_url <- "https://sigel.aneel.gov.br/arcgis/rest/services/PORTAL/AGs_Validador_EOL/MapServer/0/query"
+
+#ags_validador_eol_sf <- fetch_arcgis_by_objectids(query_url, chunk_size = 1000)
+
+#print(ags_validador_eol_sf)
+#saveRDS(ags_validador_eol_sf, "ags_validador_eol_full_aneel_jun2025.RDS")
+
+#ags_validador_eol_clean <- ags_validador_eol_sf %>%
+  #mutate(
+    #fab_raw  = FABRICANTE_AERO,
+    # 1) normalize
+    #fab_norm = fab_raw |> 
+      #str_to_lower() |>
+      #stringi::stri_trans_general("Latin-ASCII") |>
+      #str_replace_all("[^a-z0-9 ]", " ") |>
+      #str_squish(),
+
+    # 2) map to canonical names (order matters!)
+    #FABRICANTE_CLEAN = case_when(
+      # Siemens Gamesa (incl. SGRE + common typos)
+      #str_detect(fab_norm, "siem|sgre|siemens.*gamesa|simens|siemes") ~ "Siemens Gamesa",
+
+      # Nordex + Acciona (any of these → merged brand), include AW models
+      #str_detect(fab_norm, "nordex|acciona|\\baw\\s*\\d") ~ "Nordex Acciona",
+
+      # Vestas (incl. V150 mentions)
+      #str_detect(fab_norm, "vestas|\\bv150\\b") ~ "Vestas",
+
+      # GE (many variants, incl. model strings like ge116, ge 1.7)
+      #str_detect(fab_norm, "\\bge\\b|^ge\\b|general electric|\\bge\\s*\\d") ~ "GE",
+
+      # Standalone Gamesa (older brand; keep separate unless you want to merge)
+      #str_detect(fab_norm, "gamesa") ~ "Gamesa",
+
+      # Enercon
+      #str_detect(fab_norm, "enercon") ~ "Enercon",
+
+      # Goldwind
+      #str_detect(fab_norm, "goldwind") ~ "Goldwind",
+
+      # Ming Yang (many spellings)
+      #str_detect(fab_norm, "ming|myng|mingyang|myse") ~ "Ming Yang",
+
+      # WEG / Wobben
+      #str_detect(fab_norm, "\\bweg\\b|wobben") ~ "WEG",
+
+      # Dongfang
+      #str_detect(fab_norm, "dongfang") ~ "Dongfang Electric",
+
+      # IMPSA
+      #str_detect(fab_norm, "impsa") ~ "IMPSA",
+
+      # fallback: keep original
+      #TRUE ~ fab_raw
+    #)
+  #)
+
+#ags_validador_eol_clean2 <- ags_validador_eol_clean %>%
+  #mutate(
+    # Use the normalized string if you kept `fab_norm`; otherwise normalize on the fly:
+    #nm = str_to_lower(FABRICANTE_CLEAN),
+
+    #FABRICANTE_CLEAN = case_when(
+      # any plain Gamesa -> Siemens Gamesa
+      #nm == "gamesa" ~ "Siemens Gamesa",
+      # Alstom variants (including typos)
+      #str_detect(nm, "alstom|alston") ~ "Alstom",
+      #TRUE ~ FABRICANTE_CLEAN
+    #)
+  #) %>%
+  #select(-nm)
+
+#ags_validador_eol_clean2 <- ags_validador_eol_clean2 %>% 
+  #mutate(FABRICANTE_CLEAN=case_when(
+    #FABRICANTE_CLEAN=="Ming Yang"~"Mingyang",
+    #TRUE~FABRICANTE_CLEAN
+  #))
+
+ags_validador_eol_sf <- readRDS("./data/ags_validador_eol_full_aneel_jun2025.RDS")
+
+ags_validador_eol_clean <- ags_validador_eol_sf %>%
+  mutate(
+    fab_raw  = FABRICANTE_AERO,
+    # 1) normalize
+    fab_norm = fab_raw |> 
+      str_to_lower() |>
+      stringi::stri_trans_general("Latin-ASCII") |>
+      str_replace_all("[^a-z0-9 ]", " ") |>
+      str_squish(),
+
+    # 2) map to canonical names (order matters!)
+    FABRICANTE_CLEAN = case_when(
+      # Siemens Gamesa (incl. SGRE + common typos)
+      str_detect(fab_norm, "siem|sgre|siemens.*gamesa|simens|siemes") ~ "Siemens Gamesa",
+
+      # Nordex + Acciona (any of these → merged brand), include AW models
+      str_detect(fab_norm, "nordex|acciona|\\baw\\s*\\d") ~ "Nordex Acciona",
+
+      # Vestas (incl. V150 mentions)
+      str_detect(fab_norm, "vestas|\\bv150\\b") ~ "Vestas",
+
+      # GE (many variants, incl. model strings like ge116, ge 1.7)
+      str_detect(fab_norm, "\\bge\\b|^ge\\b|general electric|\\bge\\s*\\d") ~ "GE",
+
+      # Standalone Gamesa (older brand; keep separate unless you want to merge)
+      str_detect(fab_norm, "gamesa") ~ "Gamesa",
+
+      # Enercon
+      str_detect(fab_norm, "enercon") ~ "Enercon",
+
+      # Goldwind
+      str_detect(fab_norm, "goldwind") ~ "Goldwind",
+
+      # Ming Yang (many spellings)
+      str_detect(fab_norm, "ming|myng|mingyang|myse") ~ "Ming Yang",
+
+      # WEG / Wobben
+      str_detect(fab_norm, "\\bweg\\b|wobben") ~ "WEG",
+
+      # Dongfang
+      str_detect(fab_norm, "dongfang") ~ "Dongfang Electric",
+
+      # IMPSA
+      str_detect(fab_norm, "impsa") ~ "IMPSA",
+
+      # fallback: keep original
+      TRUE ~ fab_raw
+    )
+  )
+
+ags_validador_eol_clean2 <- ags_validador_eol_clean %>%
+  mutate(
+    # Use the normalized string if you kept `fab_norm`; otherwise normalize on the fly:
+    nm = str_to_lower(FABRICANTE_CLEAN),
+
+    FABRICANTE_CLEAN = case_when(
+      # any plain Gamesa -> Siemens Gamesa
+      nm == "gamesa" ~ "Siemens Gamesa",
+      # Alstom variants (including typos)
+      str_detect(nm, "alstom|alston") ~ "Alstom",
+      TRUE ~ FABRICANTE_CLEAN
+    )
+  ) %>%
+  select(-nm)
+
+ags_validador_eol_clean2 <- ags_validador_eol_clean2 %>% 
+  mutate(FABRICANTE_CLEAN=case_when(
+    FABRICANTE_CLEAN=="Ming Yang"~"Mingyang",
+    TRUE~FABRICANTE_CLEAN
+  ))
+
+rm(ags_validador_eol_clean, ags_validador_eol_sf)
+```
+
+```{r data_loading7}
+wind_turbines_imports_SH6 <- read_xlsx("./data/IMP_SH6_850231_2000_2024.xlsx", sheet = 1) %>% 
+  pivot_longer(3:28, values_to = "Free_On_Board_USD_Import") %>% 
+  separate(name, sep = "-", into = "Year")
+```
+
+```{r data_loading8}
+wind_turbines_exports_SH6 <- read_xlsx("./data/EXP_SH6_850231_2000_2024.xlsx", sheet = 1) %>% 
+  pivot_longer(3:27, values_to = "Free_On_Board_USD_Export") %>% 
+  separate(name, sep = "-", into = "Year")
+```
+
+```{r data_wrangling1}
+
+WIPO_PatentsPublication_ByFillingCountry_BR <- WIPO_PatentsPublication_ByFillingCountry_BR %>% 
+  filter(Year>1999 & Origin!="Unknown") %>% 
+  group_by(Year) %>% 
+  mutate(Year_Total=sum(n_Patents_Published)) %>% 
+  ungroup() %>% 
+  group_by(Year, Origin) %>% 
+  mutate(share=round(n_Patents_Published/Year_Total*100, 2)) %>% 
+  ungroup() %>% 
+  filter(Origin=="Brazil"|
+         Origin=="Germany"|
+         Origin=="Spain"|
+         Origin=="China"|
+         Origin=="Denmark"|
+         Origin=="United States of America") %>% 
+  mutate(Origin=case_when(Origin=="United States of America"~"United States",
+                          TRUE~Origin),
+          Origin=factor(Origin,
+                       levels = c(
+                         "China",
+                         "Denmark",
+                         "Germany",
+                         "Spain",
+                         "United States",
+                         "Brazil"
+                       )),
+         Source="WIPO")
+
+```
+
+```{r data_wrangling2}
+
+Brazilian_Patents_Filed_at_BR <- WIPO_PatentsPublication_BRFilings_Worldwide %>% 
+  filter(Patent_Filed_At=="Brazil") %>% 
+  select(c(Year, n_Patents_Published)) %>% 
+  rename(n_Patents_Published_BROffice=n_Patents_Published)
+
+Brazilian_Wind_Patents_FiledinBR_FiledinWorld_Comparison <- WIPO_PatentsPublication_BRFilings_Worldwide %>%
+  group_by(Year) %>% 
+  summarise(n_Patents_Published=sum(n_Patents_Published)) %>% 
+  filter(Year>1999) %>% 
+  left_join(Brazilian_Patents_Filed_at_BR, by="Year") %>% 
+  mutate(share_Patents_Publised_Out_BR=round(((1-n_Patents_Published_BROffice/n_Patents_Published)*100), 1))
+
+Brazilian_Wind_Patents_FiledinBR_FiledinWorld_Comparison
+```
+
+```{r data_wrangling3}
+WindPatents_Total_per_Year <- WIPO_WindPatents_Total %>% 
+   group_by(Year) %>% 
+  summarise(n_Patents_Published_Worldwide=sum(n_Patents_Published)) %>% 
+  filter(Year>1999)
+
+Brazilian_Share_Wind_Patents_Worldwide <- WIPO_PatentsPublication_BRFilings_Worldwide %>% 
+  group_by(Year) %>% 
+  summarise(n_Patents_Published_byBR=sum(n_Patents_Published)) %>% 
+  filter(Year>1999) %>% 
+  left_join(WindPatents_Total_per_Year, by="Year") %>% 
+  mutate(Brazilian_share=round(((n_Patents_Published_byBR/n_Patents_Published_Worldwide)*100), 9))
+
+Brazilian_Share_Wind_Patents_Worldwide
+```
+
+
+```{r figure1}
+WIPO_PatentsPublication_ByFillingCountry_BR %>% 
+  filter(Year>1999 & Origin!="Unknown") %>% 
+  group_by(Year) %>% 
+  mutate(Year_Total=sum(n_Patents_Published)) %>% 
+  ungroup() %>% 
+  group_by(Year, Origin) %>% 
+  mutate(share=round(n_Patents_Published/Year_Total*100, 2)) %>% 
+  ungroup() %>% 
+  filter(Origin=="Brazil"|
+         Origin=="Germany"|
+         Origin=="China"|
+         Origin=="Denmark"|
+           Origin=="Spain"|
+         Origin=="United States") %>% 
+  mutate(Origin=factor(Origin,
+                       levels = c(
+                         "China",
+                         "Denmark",
+                         "Germany",
+                         "Spain",
+                         "United States",
+                         "Brazil"
+                       )),
+         Source="WIPO") %>% 
+  ggplot()+
+  geom_col(aes(x=Year, y=share, fill = Origin, colour = Origin), alpha=0.75)+
+  theme_minimal()+
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.text.x = element_text(angle=90))+
+  labs(x="",
+       y="% of Published Patents")+
+  scale_fill_brewer(palette="Spectral")+
+  scale_color_brewer(palette="Spectral")+
+  scale_x_continuous(breaks = c(2000:2023))
+```
+
+```{r figure2}
+BADEPI_PatentsPublicationByCountry %>% 
+  filter(CD_PAIS_PFPJ=="BR"|
+         CD_PAIS_PFPJ=="US"|
+         CD_PAIS_PFPJ=="DK"|
+         CD_PAIS_PFPJ=="DE"|
+         CD_PAIS_PFPJ=="ES"|        
+         CD_PAIS_PFPJ=="CN") %>% 
+  mutate(CD_PAIS_PFPJ=case_when(
+    CD_PAIS_PFPJ=="CN"~"China",
+    CD_PAIS_PFPJ=="DK"~"Denmark",
+    CD_PAIS_PFPJ=="DE"~"Germany",
+    CD_PAIS_PFPJ=="ES"~"Spain",
+    CD_PAIS_PFPJ=="US"~"United States",
+    CD_PAIS_PFPJ=="BR"~"Brazil",
+    TRUE~CD_PAIS_PFPJ
+  ),
+          CD_PAIS_PFPJ=factor(CD_PAIS_PFPJ,
+                       levels = c(
+                         "China",
+                         "Denmark",
+                         "Germany",
+                         "Spain",
+                         "United States",
+                         "Brazil"
+                       )),
+          Source="INPI") %>% 
+  ggplot()+
+  geom_col(aes(x=Year, y=share, fill = CD_PAIS_PFPJ, colour = CD_PAIS_PFPJ), alpha=0.75)+
+  theme_minimal()+
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank())+
+  labs(x="",
+       y="% of Published Patents",
+       fill="Origin",
+       colour="Origin")+
+  scale_fill_brewer(palette="Spectral")+
+  scale_color_brewer(palette="Spectral")
+```
+
+
+```{r figure_map}
+pts <- ags_validador_eol_clean2 %>%
+  st_as_sf() %>%
+  st_transform(4326) %>%
+  transmute(
+    nome = NOME_EOL,
+    aerogerador = DEN_AEG,
+    fabricante = FABRICANTE_CLEAN,
+    pot_kw = POT_TURBINA
+  )
+
+leaflet(pts, options = leafletOptions(preferCanvas = TRUE)) %>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addCircleMarkers(
+    radius = 2,
+    weight = 0.3,
+    fillOpacity = 0.7,
+    popup = ~paste0(
+      "<b>", nome, "</b><br>",
+      "Aerogerador: ", aerogerador, "<br>",
+      "Fabricante: ", fabricante, "<br>",
+      "Potência (kW): ", pot_kw
+    ),
+    clusterOptions = markerClusterOptions(
+      chunkedLoading = TRUE
+    )
+  ) %>%
+  setView(lng = -52.9, lat = -14.2, zoom = 4)
+```
+
+```{r figure4}
+ags_validador_eol_clean2 %>%
+  st_drop_geometry() %>%
+  count(FABRICANTE_CLEAN, sort = TRUE) %>% 
+  mutate(share=round(n/sum(n)*100, 2)) %>% 
+  slice_max(share, n=10) %>% 
+  mutate(FABRICANTE_CLEAN=factor(
+    FABRICANTE_CLEAN, levels = c(
+      "Vestas",
+      "Siemens Gamesa",
+      "Nordex Acciona",
+      "GE",
+      "WEG",
+      "Goldwind",
+      "Mingyang",
+      "Alstom",
+      "IMPSA",
+      "Enercon"
+    )
+  ))%>% 
+  ggplot()+
+  geom_col(aes(x=FABRICANTE_CLEAN, y=share, fill = FABRICANTE_CLEAN), alpha=0.75) + 
+  scale_x_discrete(expand = c(0,0)) +
+  scale_fill_brewer(palette="Spectral")+
+  theme_minimal()+
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none",
+        axis.text.x = element_text(angle = 90, vjust = 0.125))+
+  labs(x="") +
+  scale_y_continuous("% Wind Turbine Market")
+```
+
+```{r figure5, results='hide'}
+getSymbols("CPIAUCNS", src = "FRED")
+
+# Convert to tibble
+cpi_df <- tibble(
+  date = index(CPIAUCNS),
+  cpi = as.numeric(CPIAUCNS)
+) %>%
+  mutate(Year = year(date)) %>%
+  group_by(Year) %>%
+  summarise(cpi = mean(cpi, na.rm = TRUE))  # Annual average CPI
+
+wind_turbine_commercial_balance <- wind_turbines_imports_SH6 %>% 
+  select(c(Year, Free_On_Board_USD_Import)) %>% 
+  left_join(wind_turbines_exports_SH6 %>% 
+              select(c(Year, Free_On_Board_USD_Export)), by="Year") %>% 
+  mutate(Free_On_Board_USD_Export=replace_na(Free_On_Board_USD_Export, 0),
+         balance=Free_On_Board_USD_Export-Free_On_Board_USD_Import,
+         Year=as.numeric(Year))
+
+base_cpi <- cpi_df %>% filter(Year == 2024) %>% pull(cpi)
+
+wind_turbine_commercial_balance <- wind_turbine_commercial_balance %>% 
+  left_join(cpi_df, by="Year")
+
+wind_turbine_commercial_balance_adj <- wind_turbine_commercial_balance %>%
+  filter(Year!=2025) %>% 
+  mutate(across(
+    c(Free_On_Board_USD_Import, Free_On_Board_USD_Export, balance),
+    ~ .x * (base_cpi / cpi),
+    .names = "{.col}_real_2024USD"
+  ))
+```
+
+```{r figure6}
+wind_turbine_commercial_balance_adj %>%
+  filter(Year!=2025) %>% 
+  select(c(Year, balance_real_2024USD))%>%
+  mutate(balance_type = ifelse(balance_real_2024USD > 0, "Surplus", "Deficit")) %>%
+  ggplot(aes(x = Year, y = balance_real_2024USD, fill = balance_type)) +
+  geom_col(alpha = 0.75) +
+  scale_fill_manual(values = c("Surplus" = "steelblue", "Deficit" = "firebrick")) +
+  scale_x_continuous(expand = c(0, 0), breaks = c(2000:2025)) +
+  scale_y_continuous("US$", labels = unit_format(unit = "M", scale = 1e-6)) +
+  theme_minimal() +
+  theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_text(angle = 90, vjust = 0.125),
+    legend.position = "none"
+  ) +
+  labs(x = "")
+```
